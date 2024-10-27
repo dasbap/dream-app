@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, Button, StyleSheet, FlatList, Modal, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, Button, StyleSheet, FlatList, Modal, TextInput, Switch, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContext } from '@react-navigation/native';
 import { useFocusEffect } from '@react-navigation/native';
@@ -32,7 +32,7 @@ const DreamList: React.FC = () => {
   const [sleepQualityFilter, setSleepQualityFilter] = useState<number | undefined>(undefined);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
-  const navigation = useContext(NavigationContext); // Utilisation correcte du context de navigation
+  const navigation = useContext(NavigationContext);
 
   useEffect(() => {
     const loadDreams = async () => {
@@ -146,7 +146,9 @@ const DreamList: React.FC = () => {
         <Text style={styles.itemDetail}>{`Lieu: ${item.location}`}</Text>
         <Text style={styles.itemDetail}>{`Personnages: ${item.characters}`}</Text>
         <Text style={styles.itemDetail}>{`Date: ${item.date}`}</Text>
-        <Text style={styles.itemDetail}>{`Lucide: ${item.isLucid ? 'Oui' : 'Non'}`}</Text>
+        <Text style={[styles.itemDetail, item.isLucid ? styles.lucid : styles.nonLucid]}>
+          {item.isLucid ? '🔮 Lucide' : '😴 Non lucide'}
+        </Text>
         <View style={styles.buttonContainer}>
           <Button title="Actions" onPress={() => showActionAlert(item)} color="#ffa500" />
         </View>
@@ -191,12 +193,11 @@ const DreamList: React.FC = () => {
               placeholderTextColor="#ccc"
             />
             <Text style={styles.modalLabel}>Lucide:</Text>
-            <TouchableOpacity onPress={() => setIsLucidFilter(isLucidFilter === true ? undefined : true)}>
-              <Text style={[styles.button, isLucidFilter === true && styles.buttonActive]}>Oui</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setIsLucidFilter(isLucidFilter === false ? undefined : false)}>
-              <Text style={[styles.button, isLucidFilter === false && styles.buttonActive]}>Non</Text>
-            </TouchableOpacity>
+            <Switch
+              value={isLucidFilter === true}
+              onValueChange={(value) => setIsLucidFilter(value ? true : undefined)}
+            />
+            <Text style={styles.modalLabel}>{isLucidFilter === true ? 'Oui' : 'Non'}</Text>
             <Text style={styles.modalLabel}>Intensité:</Text>
             <TextInput
               style={styles.input}
@@ -224,9 +225,9 @@ const DreamList: React.FC = () => {
               onChangeText={text => setSleepQualityFilter(text ? parseInt(text) : undefined)}
               placeholderTextColor="#ccc"
             />
-            <View style={styles.buttonContainer}>
+            <View style={styles.modalButtonContainer}>
               <Button title="Appliquer" onPress={applyFilters} color="#ffa500" />
-              <Button title="Annuler" onPress={() => setFilterModalVisible(false)} color="#ff0000" />
+              <Button title="Annuler" onPress={() => setFilterModalVisible(false)} color="#d9534f" />
             </View>
           </View>
         </View>
@@ -235,8 +236,7 @@ const DreamList: React.FC = () => {
         data={filteredDreams}
         renderItem={renderDreamItem}
         keyExtractor={item => item.id}
-        contentContainerStyle={styles.listContainer}
-        showsVerticalScrollIndicator={false}
+        style={styles.list} // Ajoutez cette ligne pour éviter l'erreur
       />
     </View>
   );
@@ -245,27 +245,29 @@ const DreamList: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: '#fff',
-  },
-  listContainer: {
-    paddingBottom: 100,
+    padding: 20,
   },
   item: {
-    marginBottom: 16,
-    padding: 16,
-    borderRadius: 8,
-    backgroundColor: '#f9f9f9',
-    borderColor: '#ddd',
+    marginVertical: 10,
+    padding: 20,
     borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 10,
   },
   itemTitle: {
     fontSize: 18,
     fontWeight: 'bold',
   },
   itemDetail: {
-    fontSize: 14,
-    marginVertical: 2,
+    fontSize: 16,
+  },
+  lucid: {
+    color: 'green',
+    fontWeight: 'bold',
+  },
+  nonLucid: {
+    color: 'red',
+    fontWeight: 'bold',
   },
   modalOverlay: {
     flex: 1,
@@ -275,45 +277,36 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     width: '80%',
+    padding: 20,
     backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 16,
-    elevation: 5,
+    borderRadius: 10,
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 16,
+    marginBottom: 10,
   },
   modalLabel: {
     fontSize: 16,
-    marginTop: 10,
-    marginBottom: 5,
+    marginVertical: 5,
   },
   input: {
-    borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 4,
-    padding: 8,
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 10,
     marginBottom: 10,
   },
   buttonContainer: {
+    marginTop: 10,
+  },
+  modalButtonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginTop: 20,
   },
-  button: {
-    backgroundColor: '#ffa500',
-    padding: 10,
-    borderRadius: 4,
-    flex: 1,
-    marginHorizontal: 5,
-  },
-  buttonActive: {
-    backgroundColor: '#ff4500',
-  },
-  buttonText: {
-    color: '#fff',
-    textAlign: 'center',
+  list: { 
+    marginTop: 10,
   },
 });
 
