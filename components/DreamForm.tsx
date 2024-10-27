@@ -8,10 +8,10 @@ import { TextInput as RNTextInput } from 'react-native';
 const { width } = Dimensions.get('window');
 
 const tagsList = [
-  { label: '🏞️ Aventure', value: '#Adventure' },
-  { label: '✈️ Vol', value: '#Flight' },
-  { label: '😱 Cauchemar', value: '#Nightmare' },
-  { label: '❤️ Amour', value: '#Love' },
+  { label: '🏞️ Aventure', value: '#Adventure🏞️' },
+  { label: '✈️ Vol', value: '#Flight✈️' },
+  { label: '😱 Cauchemar', value: '#Nightmare😱' },
+  { label: '❤️ Amour', value: '#Love❤️' },
   { label: '🏃‍♂️ Poursuite', value: '#Chase' },
   { label: '🌌 Fantaisie', value: '#Fantasy' },
   { label: '👪 Famille', value: '#Family' },
@@ -81,7 +81,6 @@ export default function DreamForm() {
       console.error('Erreur de sauvegarde du rêve:', error);
     }
 
-    // Réinitialisation des champs
     setDreamText('Voici mon rêve #tropbien');
     setIsLucidDream(false);
     setSelectedTags([]);
@@ -263,7 +262,7 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   normalTextDark: {
-    color: 'white',
+    color: 'black',
   },
   hashtag: {
     color: 'blue',

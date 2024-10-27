@@ -19,7 +19,6 @@ type CalendarComponentProps = {
 
 const CalendarComponent: React.FC<CalendarComponentProps> = ({ selectedDate, onDateSelect }) => {
   useEffect(() => {
-    // Permet de mettre à jour la sélection si la date sélectionnée est réinitialisée
   }, [selectedDate]);
 
   const onDayPress = (day: { dateString: string }) => {
